@@ -1,3 +1,5 @@
+//! Async sink of time-series data
+
 extern crate bson;
 #[macro_use]
 extern crate derive_new;
