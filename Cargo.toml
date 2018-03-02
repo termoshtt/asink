@@ -1,0 +1,12 @@
+[package]
+name = "asink"
+version = "0.1.0"
+authors = ["Toshiki Teramura <toshiki.teramura@gmail.com>"]
+
+[dependencies]
+serde = "1.0"
+mongodb = "0.3"
+bson = "0.10"
+derive-new = "0.5"
+rmp = "0.8"
+rmp-serde = "0.13"
