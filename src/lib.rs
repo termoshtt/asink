@@ -14,6 +14,6 @@ pub mod mongo;
 pub mod msgpack;
 
 /// Start a thread for saving time-series
-pub trait TimeSeriesStorage<Document: Send + Serialize> {
+pub trait Sink<Document: Send + Serialize> {
     fn run(self) -> (Sender<Document>, JoinHandle<()>);
 }

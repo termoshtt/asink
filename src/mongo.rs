@@ -6,7 +6,7 @@ use bson;
 use mongodb::ThreadedClient;
 use mongodb::db::ThreadedDatabase;
 
-use super::TimeSeriesStorage;
+use super::Sink;
 
 #[derive(new, Debug, Clone)]
 pub struct MongoStorage {
@@ -35,7 +35,7 @@ fn into_bson_document<T: Serialize>(val: T) -> bson::Document {
     }
 }
 
-impl<Doc: 'static + Send + Serialize> TimeSeriesStorage<Doc> for MongoStorage {
+impl<Doc: 'static + Send + Serialize> Sink<Doc> for MongoStorage {
     fn run(self) -> (Sender<Doc>, JoinHandle<()>) {
         let (s, r) = channel::<Doc>();
         let th = spawn(move || {

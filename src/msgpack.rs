@@ -5,7 +5,7 @@ use std::io::BufWriter;
 use std::path::{Path, PathBuf};
 use std::fs::File;
 
-use super::TimeSeriesStorage;
+use super::Sink;
 
 #[derive(Debug, Clone)]
 pub struct MsgpackStorage {
@@ -20,7 +20,7 @@ impl MsgpackStorage {
     }
 }
 
-impl<Doc: 'static + Send + Serialize> TimeSeriesStorage<Doc> for MsgpackStorage {
+impl<Doc: 'static + Send + Serialize> Sink<Doc> for MsgpackStorage {
     fn run(self) -> (Sender<Doc>, JoinHandle<()>) {
         let (s, r) = channel::<Doc>();
         let th = spawn(move || {
