@@ -9,14 +9,14 @@ use mongodb::db::ThreadedDatabase;
 use super::Sink;
 
 #[derive(new, Debug, Clone)]
-pub struct MongoStorage {
+pub struct MongoSink {
     host: String,
     port: u16,
     db: String,
     collection: String,
 }
 
-impl MongoStorage {
+impl MongoSink {
     pub fn local(db: &str, collection: &str) -> Self {
         Self::new(
             "localhost".to_string(),
@@ -35,7 +35,7 @@ fn into_bson_document<T: Serialize>(val: T) -> bson::Document {
     }
 }
 
-impl<Doc: 'static + Send + Serialize> Sink<Doc> for MongoStorage {
+impl<Doc: 'static + Send + Serialize> Sink<Doc> for MongoSink {
     fn run(self) -> (Sender<Doc>, JoinHandle<()>) {
         let (s, r) = channel::<Doc>();
         let th = spawn(move || {

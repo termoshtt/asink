@@ -8,11 +8,11 @@ use std::fs::File;
 use super::Sink;
 
 #[derive(Debug, Clone)]
-pub struct MsgpackStorage {
+pub struct MsgpackSink {
     filename: PathBuf,
 }
 
-impl MsgpackStorage {
+impl MsgpackSink {
     pub fn new(path: &Path) -> Self {
         Self {
             filename: PathBuf::from(path),
@@ -20,7 +20,7 @@ impl MsgpackStorage {
     }
 }
 
-impl<Doc: 'static + Send + Serialize> Sink<Doc> for MsgpackStorage {
+impl<Doc: 'static + Send + Serialize> Sink<Doc> for MsgpackSink {
     fn run(self) -> (Sender<Doc>, JoinHandle<()>) {
         let (s, r) = channel::<Doc>();
         let th = spawn(move || {
