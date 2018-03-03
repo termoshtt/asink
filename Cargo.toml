@@ -1,6 +1,6 @@
 [package]
 name = "asink"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Toshiki Teramura <toshiki.teramura@gmail.com>"]
 
 description   = "Async sink for timeseries data"
