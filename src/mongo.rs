@@ -1,3 +1,5 @@
+//! Sink with MongoDB backend
+
 use serde::Serialize;
 use std::thread::{spawn, JoinHandle};
 use std::sync::mpsc::{channel, Sender};
@@ -8,6 +10,10 @@ use mongodb::db::ThreadedDatabase;
 
 use super::Sink;
 
+/// Sink with MongoDB backend
+///
+/// Each data send to this sink will be serialized into `bson::Document`
+/// i.e. the data must be serialized into `Document`.
 #[derive(new, Debug, Clone)]
 pub struct MongoSink {
     host: String,
@@ -17,6 +23,7 @@ pub struct MongoSink {
 }
 
 impl MongoSink {
+    /// Connect to mongodb with default setting `localhost:27017`
     pub fn local(db: &str, collection: &str) -> Self {
         Self::new(
             "localhost".to_string(),
