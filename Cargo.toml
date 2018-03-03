@@ -3,6 +3,12 @@ name = "asink"
 version = "0.1.0"
 authors = ["Toshiki Teramura <toshiki.teramura@gmail.com>"]
 
+description   = "Async sink for timeseries data"
+documentation = "https://docs.rs/asink/"
+repository    = "https://github.com/termoshtt/asink"
+license       = "MIT"
+readme        = "README.md"
+
 [dependencies]
 serde = "1.0"
 serde_json = "1.0"
