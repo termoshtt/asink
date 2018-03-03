@@ -13,9 +13,15 @@ pub struct MsgpackSink {
 }
 
 impl MsgpackSink {
-    pub fn new(path: &Path) -> Self {
+    pub fn from_path(path: &Path) -> Self {
         Self {
             filename: PathBuf::from(path),
+        }
+    }
+
+    pub fn from_str(path: &str) -> Self {
+        Self {
+            filename: From::from(path.to_string()),
         }
     }
 }

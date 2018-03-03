@@ -37,3 +37,11 @@ fn json() {
     experiment(s);
     th.join().unwrap();
 }
+
+#[test]
+fn msgpack() {
+    let sink = msgpack::MsgpackSink::from_str("test.msg");
+    let (s, th) = sink.run();
+    experiment(s);
+    th.join().unwrap();
+}
