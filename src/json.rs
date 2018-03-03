@@ -1,8 +1,8 @@
 use serde::Serialize;
 use serde_json::to_writer;
-use std::sync::mpsc::{channel, Sender};
+use std::sync::mpsc::{channel, Receiver, Sender};
 use std::thread::{spawn, JoinHandle};
-use std::io::{stdout, BufWriter};
+use std::io::{stdout, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::fs::File;
 
@@ -10,7 +10,7 @@ use super::Sink;
 
 /// Output data as [JSON lines] (a.k.a [Newline-deliminated JSON]) like following:
 ///
-/// ```
+/// ```ignore
 /// {"a": 1, "b": [1, 2, 3]}
 /// {"a": 2, "b": [2, 2, 3]}
 /// ```
@@ -23,9 +23,15 @@ pub struct JsonSink {
 }
 
 impl JsonSink {
-    pub fn new(path: &Path) -> Self {
+    pub fn from_path(path: &Path) -> Self {
         Self {
             filename: PathBuf::from(path),
+        }
+    }
+
+    pub fn from_str(path: &str) -> Self {
+        Self {
+            filename: From::from(path.to_string()),
         }
     }
 }
@@ -34,13 +40,8 @@ impl<Doc: 'static + Send + Serialize> Sink<Doc> for JsonSink {
     fn run(self) -> (Sender<Doc>, JoinHandle<()>) {
         let (s, r) = channel::<Doc>();
         let th = spawn(move || {
-            let mut buf = BufWriter::new(File::create(self.filename).ok().unwrap());
-            loop {
-                match r.recv() {
-                    Ok(doc) => to_writer(&mut buf, &doc).unwrap(),
-                    Err(_) => break,
-                }
-            }
+            let buf = BufWriter::new(File::create(self.filename).ok().unwrap());
+            output_json(buf, r)
         });
         (s, th)
     }
@@ -55,14 +56,25 @@ impl<Doc: 'static + Send + Serialize> Sink<Doc> for StdoutSink {
         let (s, r) = channel::<Doc>();
         let th = spawn(move || {
             let out = stdout();
-            let mut buf = BufWriter::new(out.lock());
-            loop {
-                match r.recv() {
-                    Ok(doc) => to_writer(&mut buf, &doc).unwrap(),
-                    Err(_) => break,
-                }
-            }
+            let buf = BufWriter::new(out.lock());
+            output_json(buf, r)
         });
         (s, th)
+    }
+}
+
+fn output_json<Buf, Doc>(mut buf: Buf, r: Receiver<Doc>)
+where
+    Buf: Write,
+    Doc: Serialize,
+{
+    loop {
+        match r.recv() {
+            Ok(doc) => {
+                to_writer(&mut buf, &doc).unwrap();
+                writeln!(buf, "").unwrap();
+            }
+            Err(_) => return,
+        }
     }
 }

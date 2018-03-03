@@ -11,3 +11,6 @@ bson = "0.10"
 derive-new = "0.5"
 rmp = "0.8"
 rmp-serde = "0.13"
+
+[dev-dependencies]
+serde_derive = "1.0"
