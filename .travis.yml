@@ -1,0 +1,20 @@
+language: rust
+sudo: false
+dist: trusty
+
+rust:
+  - stable
+  - beta
+  - nightly
+
+matrix:
+  allow_failures:
+    - rust: nightly
+
+script:
+  - cargo test
+  - diff answer.json test.json
+  - diff answer.msg test.msg
+
+env:
+  - RUST_BACKTRACE=1
